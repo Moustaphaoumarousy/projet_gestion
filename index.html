@@ -1,0 +1,3379 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EasyFacture Pro - Solution de Facturation pour le Sénégal</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+    <style>
+        :root {
+            --primary: #4361ee;
+            --primary-light: #4895ef;
+            --primary-dark: #3a0ca3;
+            --secondary: #4cc9f0;
+            --success: #4ade80;
+            --danger: #f87171;
+            --warning: #fbbf24;
+            --info: #60a5fa;
+            --light: #f9fafb;
+            --dark: #1f2937;
+            --sidebar-width: 280px;
+            --header-height: 70px;
+            --border-radius: 12px;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.12);
+            --shadow-md: 0 4px 6px rgba(0,0,0,0.1);
+            --shadow-lg: 0 10px 25px rgba(0,0,0,0.1);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: #f8fafc;
+            color: var(--dark);
+            line-height: 1.6;
+        }
+
+        /* Typographie moderne */
+        h1, h2, h3, h4, h5, h6 {
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .text-muted {
+            color: #6b7280 !important;
+        }
+
+        /* Layout principal */
+        .app-container {
+            display: flex;
+            min-height: 100vh;
+            background-color: #f8fafc;
+        }
+
+        /* Sidebar redessinée */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: white;
+            border-right: 1px solid #e5e7eb;
+            height: 100vh;
+            position: fixed;
+            z-index: 100;
+            transition: var(--transition);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .sidebar-brand {
+            display: flex;
+            align-items: center;
+            padding: 1.5rem 1.5rem 1rem;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .sidebar-brand img {
+            height: 36px;
+            margin-right: 12px;
+        }
+
+        .sidebar-brand h3 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--primary-dark);
+            margin-bottom: 0;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1.5rem;
+            color: #4b5563;
+            border-radius: var(--border-radius);
+            margin: 0.25rem 1rem;
+            transition: var(--transition);
+        }
+
+        .nav-link:hover {
+            background-color: #f3f4f6;
+            color: var(--primary);
+        }
+
+        .nav-link.active {
+            background-color: var(--primary);
+            color: white;
+            font-weight: 500;
+        }
+
+        .nav-link i {
+            margin-right: 12px;
+            width: 20px;
+            text-align: center;
+            font-size: 1.1rem;
+        }
+
+        .nav-link.active i {
+            color: white;
+        }
+
+        /* Contenu principal */
+        .main-content {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            padding: 2rem;
+            transition: var(--transition);
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .page-header h2 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+        }
+
+        .page-header h2 i {
+            margin-right: 12px;
+            color: var(--primary);
+        }
+
+        /* Cartes modernes */
+        .card {
+            border: none;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-sm);
+            transition: var(--transition);
+            margin-bottom: 1.5rem;
+            background: white;
+        }
+
+        .card:hover {
+            box-shadow: var(--shadow-md);
+            transform: translateY(-2px);
+        }
+
+        .card-header {
+            background: white;
+            border-bottom: 1px solid #e5e7eb;
+            padding: 1.25rem 1.5rem;
+            border-radius: var(--border-radius) var(--border-radius) 0 0 !important;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-header h5 {
+            font-weight: 600;
+            margin-bottom: 0;
+            color: var(--dark);
+        }
+
+        .card-body {
+            padding: 1.5rem;
+        }
+
+        /* Cartes de statistiques */
+        .stat-card {
+            padding: 1.5rem;
+            text-align: center;
+            border-left: 4px solid var(--primary);
+        }
+
+        .stat-card i {
+            font-size: 2.25rem;
+            margin-bottom: 1rem;
+            color: var(--primary);
+        }
+
+        .stat-card .number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--dark);
+        }
+
+        .stat-card .label {
+            color: #6b7280;
+            font-size: 0.875rem;
+        }
+
+        /* Boutons modernes */
+        .btn {
+            border-radius: var(--border-radius);
+            padding: 0.5rem 1.25rem;
+            font-weight: 500;
+            transition: var(--transition);
+            border: none;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-outline-primary {
+            border: 1px solid var(--primary);
+            color: var(--primary);
+        }
+
+        .btn-outline-primary:hover {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        /* Tableaux */
+        .table {
+            color: var(--dark);
+        }
+
+        .table th {
+            background-color: #f9fafb;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 0.5px;
+            color: #6b7280;
+            border-bottom-width: 1px;
+        }
+
+        .table td {
+            vertical-align: middle;
+            border-color: #f3f4f6;
+        }
+
+        .table-hover tbody tr:hover {
+            background-color: #f9fafb;
+        }
+
+        /* Badges */
+        .badge {
+            font-weight: 500;
+            padding: 0.35rem 0.75rem;
+            border-radius: 50px;
+            font-size: 0.75rem;
+        }
+
+        .badge.bg-success {
+            background-color: var(--success) !important;
+        }
+
+        .badge.bg-danger {
+            background-color: var(--danger) !important;
+        }
+
+        .badge.bg-warning {
+            background-color: var(--warning) !important;
+        }
+
+        /* Formulaire */
+        .form-control, .form-select {
+            border-radius: var(--border-radius);
+            padding: 0.5rem 1rem;
+            border: 1px solid #e5e7eb;
+            transition: var(--transition);
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.15);
+        }
+
+        .form-label {
+            font-weight: 500;
+            color: var(--dark);
+            margin-bottom: 0.5rem;
+        }
+
+        /* Facture */
+        .invoice-preview {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid #e5e7eb;
+        }
+
+        .invoice-header {
+            border-bottom: 1px solid #e5e7eb;
+            padding-bottom: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        /* Éléments d'interface */
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            color: white;
+            background-color: var(--primary);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1rem;
+        }
+
+        .empty-state i {
+            font-size: 3.5rem;
+            color: #e5e7eb;
+            margin-bottom: 1rem;
+        }
+
+        .empty-state h4 {
+            color: #6b7280;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Statut */
+        .status-badge {
+            display: inline-block;
+            padding: 0.35rem 0.75rem;
+            border-radius: 50px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .status-paid {
+            background-color: rgba(74, 222, 128, 0.15);
+            color: var(--success);
+        }
+
+        .status-pending {
+            background-color: rgba(251, 191, 36, 0.15);
+            color: var(--warning);
+        }
+
+        .status-unpaid {
+            background-color: rgba(248, 113, 113, 0.15);
+            color: var(--danger);
+        }
+
+        /* Toast */
+        .toast-container {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            z-index: 1100;
+        }
+
+        /* Mobile header */
+        .mobile-header {
+            display: none;
+            height: var(--header-height);
+            background: white;
+            border-bottom: 1px solid #e5e7eb;
+            padding: 0 1.5rem;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 90;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .mobile-header h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--primary-dark);
+            margin-bottom: 0;
+            display: flex;
+            align-items: center;
+        }
+
+        .mobile-header h3 i {
+            margin-right: 0.75rem;
+            color: var(--primary);
+        }
+
+        .mobile-menu-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--dark);
+        }
+
+        /* Modales */
+        .modal-content {
+            border-radius: var(--border-radius);
+            border: none;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .modal-header {
+            border-bottom: 1px solid #e5e7eb;
+            padding: 1.25rem 1.5rem;
+        }
+
+        .modal-footer {
+            border-top: 1px solid #e5e7eb;
+        }
+
+        /* Responsive */
+        @media (max-width: 992px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+                padding-top: calc(var(--header-height) + 1rem);
+            }
+
+            .mobile-header {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+            }
+        }
+
+        /* Animation */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .content-section {
+            display: none;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        /* Scrollbar personnalisée */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #d1d5db;
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #9ca3af;
+        }
+
+        /* Améliorations spécifiques aux factures */
+        .invoice-item-row {
+            transition: var(--transition);
+        }
+
+        .invoice-item-row:hover {
+            background-color: #f9fafb !important;
+        }
+
+        .product-item {
+            transition: var(--transition);
+            border-radius: var(--border-radius);
+        }
+
+        .product-item:hover {
+            background-color: #f8fafc;
+            transform: translateX(4px);
+        }
+
+        /* Loading spinner */
+        .spinner {
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        /* Gradient pour les éléments importants */
+        .gradient-bg {
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            color: white;
+        }
+
+        /* Onglets */
+        .nav-tabs .nav-link {
+            border: none;
+            color: #6b7280;
+            font-weight: 500;
+            padding: 0.75rem 1.25rem;
+            margin-right: 0.5rem;
+        }
+
+        .nav-tabs .nav-link.active {
+            color: var(--primary);
+            background: none;
+            border-bottom: 2px solid var(--primary);
+        }
+
+        /* Input group */
+        .input-group-text {
+            background-color: #f9fafb;
+            border-color: #e5e7eb;
+        }
+
+        /* Progress bars */
+        .progress {
+            height: 8px;
+            border-radius: 4px;
+            background-color: #f3f4f6;
+        }
+
+        .progress-bar {
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <div class="mobile-header">
+            <h3><i class="fas fa-file-invoice"></i> EasyFacture Pro</h3>
+            <button class="mobile-menu-btn" id="mobileMenuBtn">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+        <!--navigation-->
+        <div class="sidebar" id="sidebar">
+            <div class="p-3">
+                <div class="text-center mb-4 mt-2">
+                    <h3 class="d-none d-md-block"><i class="fas fa-file-invoice"></i> EasyFacture Pro</h3>
+                    <h3 class="d-md-none"><i class="fas fa-file-invoice"></i></h3>
+                    <p class="text-white-50 mb-0">Facturation professionnelle</p>
+                </div>
+                
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link active" data-target="dashboard">
+                            <i class="fas fa-tachometer-alt"></i>
+                            <span class="nav-text">Tableau de bord</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-target="clients">
+                            <i class="fas fa-users"></i>
+                            <span class="nav-text">Clients</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-target="products">
+                            <i class="fas fa-box-open"></i>
+                            <span class="nav-text">Produits</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-target="invoices">
+                            <i class="fas fa-file-invoice-dollar"></i>
+                            <span class="nav-text">Factures</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-target="new-invoice">
+                            <i class="fas fa-plus-circle"></i>
+                            <span class="nav-text">Nouvelle Facture</span>
+                        </a>
+                    </li>
+                    <li class="nav-item mt-4">
+                        <a class="nav-link" data-target="settings">
+                            <i class="fas fa-cog"></i>
+                            <span class="nav-text">Paramètres</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <!-- Tableau de bord -->
+            <div id="dashboard" class="content-section active">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h2><i class="fas fa-tachometer-alt me-2"></i>Tableau de bord</h2>
+                    <div class="d-flex">
+                        <button class="btn btn-sm btn-outline-secondary me-2" id="refreshDashboard">
+                            <i class="fas fa-sync"></i>
+                        </button>
+                        <div class="dropdown">
+                            <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" id="dashboardPeriodDropdown" data-bs-toggle="dropdown">
+                                <i class="fas fa-calendar me-1"></i> Ce mois
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item period-filter" href="#" data-period="today">Aujourd'hui</a></li>
+                                <li><a class="dropdown-item period-filter" href="#" data-period="week">Cette semaine</a></li>
+                                <li><a class="dropdown-item period-filter active" href="#" data-period="month">Ce mois</a></li>
+                                <li><a class="dropdown-item period-filter" href="#" data-period="year">Cette année</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row" id="statsCards">
+                    <!-- Les cartes de statistiques seront générées dynamiquement -->
+                </div>
+
+                <div class="row mt-4">
+                    <div class="col-lg-8">
+                        <div class="card">
+                            <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0">Activité récente</h5>
+                                <a href="#" class="btn btn-sm btn-outline-primary" id="viewAllInvoices">Voir tout</a>
+                            </div>
+                            <div class="card-body p-0">
+                                <div class="table-responsive">
+                                    <table class="table table-hover mb-0" id="recentInvoicesTable">
+                                        <thead>
+                                            <tr>
+                                                <th># Facture</th>
+                                                <th>Client</th>
+                                                <th>Date</th>
+                                                <th>Montant</th>
+                                                <th>Statut</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <!-- Les données seront générées dynamiquement -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="card">
+                            <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0">Clients récents</h5>
+                                <a href="#" class="btn btn-sm btn-outline-primary" id="viewAllClients">Voir tout</a>
+                            </div>
+                            <div class="card-body" id="recentClientsList">
+                                <!-- Les clients seront générés dynamiquement -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Clients -->
+            <div id="clients" class="content-section">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h2><i class="fas fa-users me-2"></i>Gestion des clients</h2>
+                    <button class="btn btn-primary" id="addClientBtn" data-bs-toggle="modal" data-bs-target="#clientModal">
+                        <i class="fas fa-plus me-1"></i> Nouveau client
+                    </button>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">Liste des clients</h5>
+                        <div class="d-flex">
+                            <div class="input-group input-group-sm" style="width: 250px;">
+                                <input type="text" class="form-control" id="clientSearchInput" placeholder="Rechercher un client...">
+                                <button class="btn btn-outline-secondary" type="button" id="clientSearchBtn">
+                                    <i class="fas fa-search"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table data-table" id="clientsTable">
+                                <thead>
+                                    <tr>
+                                        <th>Nom</th>
+                                        <th>Entreprise</th>
+                                        <th>Téléphone</th>
+                                        <th>Email</th>
+                                        <th>Factures</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Les clients seront générés dynamiquement -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Produits -->
+            <div id="products" class="content-section">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h2><i class="fas fa-box-open me-2"></i>Gestion des produits</h2>
+                    <button class="btn btn-primary" id="addProductBtn" data-bs-toggle="modal" data-bs-target="#productModal">
+                        <i class="fas fa-plus me-1"></i> Nouveau produit
+                    </button>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-8">
+                        <div class="card">
+                            <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0">Inventaire des produits</h5>
+                                <div class="d-flex">
+                                    <div class="input-group input-group-sm" style="width: 200px;">
+                                        <input type="text" class="form-control" id="productSearchInput" placeholder="Rechercher...">
+                                        <button class="btn btn-outline-secondary" type="button" id="productSearchBtn">
+                                            <i class="fas fa-search"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-body p-0">
+                                <div class="table-responsive">
+                                    <table class="table data-table" id="productsTable">
+                                        <thead>
+                                            <tr>
+                                                <th>Produit</th>
+                                                <th>Référence</th>
+                                                <th>Prix HT</th>
+                                                <th>TVA</th>
+                                                <th>Stock</th>
+                                                <th>Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <!-- Les produits seront générés dynamiquement -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card mb-4">
+                            <div class="card-header bg-white">
+                                <h5 class="mb-0">Statistiques des produits</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    <div class="d-flex justify-content-between mb-1">
+                                        <span>Produits en stock</span>
+                                        <span id="productsInStock">0</span>
+                                    </div>
+                                    <div class="progress" style="height: 10px;">
+                                        <div class="progress-bar bg-success" id="inStockProgress" role="progressbar" style="width: 0%"></div>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <div class="d-flex justify-content-between mb-1">
+                                        <span>Produits en rupture</span>
+                                        <span id="productsOutOfStock">0</span>
+                                    </div>
+                                    <div class="progress" style="height: 10px;">
+                                        <div class="progress-bar bg-danger" id="outOfStockProgress" role="progressbar" style="width: 0%"></div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="d-flex justify-content-between mb-1">
+                                        <span>Produits à réapprovisionner</span>
+                                        <span id="productsLowStock">0</span>
+                                    </div>
+                                    <div class="progress" style="height: 10px;">
+                                        <div class="progress-bar bg-warning" id="lowStockProgress" role="progressbar" style="width: 0%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="card">
+                            <div class="card-header bg-white">
+                                <h5 class="mb-0">Catégories de produits</h5>
+                            </div>
+                            <div class="card-body">
+                                <div id="productCategoriesChart" style="height: 200px;">
+                                    <!-- Le graphique sera généré dynamiquement -->
+                                    <div class="text-center py-4 text-muted">
+                                        <i class="fas fa-chart-pie fa-2x mb-2"></i>
+                                        <p>Répartition par catégorie</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Factures -->
+            <div id="invoices" class="content-section">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h2><i class="fas fa-file-invoice-dollar me-2"></i>Gestion des factures</h2>
+                    <button class="btn btn-primary" id="goToNewInvoice">
+                        <i class="fas fa-plus me-1"></i> Nouvelle facture
+                    </button>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">Historique des factures</h5>
+                        <div class="d-flex">
+                            <div class="input-group input-group-sm me-2" style="width: 200px;">
+                                <select class="form-select" id="invoiceStatusFilter">
+                                    <option value="all">Tous les statuts</option>
+                                    <option value="paid">Payée</option>
+                                    <option value="pending">En attente</option>
+                                    <option value="unpaid">Impayée</option>
+                                </select>
+                            </div>
+                            <div class="input-group input-group-sm" style="width: 250px;">
+                                <input type="text" class="form-control" id="invoiceSearchInput" placeholder="Rechercher...">
+                                <button class="btn btn-outline-secondary" type="button" id="invoiceSearchBtn">
+                                    <i class="fas fa-search"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table data-table" id="invoicesTable">
+                                <thead>
+                                    <tr>
+                                        <th># Facture</th>
+                                        <th>Client</th>
+                                        <th>Date</th>
+                                        <th>Montant</th>
+                                        <th>Échéance</th>
+                                        <th>Statut</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Les factures seront générées dynamiquement -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Nouvelle Facture -->
+            <div id="new-invoice" class="content-section">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h2><i class="fas fa-file-invoice me-2"></i>Nouvelle Facture</h2>
+                    <div>
+                        <button class="btn btn-outline-secondary me-2" id="saveDraftBtn"><i class="fas fa-save me-1"></i> Enregistrer brouillon</button>
+                        <button class="btn btn-primary" id="generatePdfBtn"><i class="fas fa-file-pdf me-1"></i> Générer PDF</button>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-lg-8">
+                        <div class="card">
+                            <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0">Détails de la facture</h5>
+                                <div>
+                                    <span class="me-3">N°: <strong id="invoiceNumberDisplay">INV-2023-001</strong></span>
+                                    <span>Date: <strong id="invoiceDateDisplay"></strong></span>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="row mb-4">
+                                    <div class="col-md-6">
+                                        <label class="form-label">Client *</label>
+                                        <select class="form-select" id="invoiceClientSelect" required>
+                                            <option value="" selected disabled>Sélectionnez un client</option>
+                                            <!-- Les clients seront chargés dynamiquement -->
+                                        </select>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label class="form-label">Date d'échéance *</label>
+                                        <input type="date" class="form-control" id="invoiceDueDate" required>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label class="form-label">Devise</label>
+                                        <select class="form-select" id="invoiceCurrency">
+                                            <option value="EUR" selected>EUR €</option>
+                                            <option value="USD">USD $</option>
+                                            <option value="GBP">GBP £</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <h5 class="mb-3">Articles</h5>
+                                <div class="table-responsive">
+                                    <table class="table table-bordered" id="invoiceItemsTable">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th style="width:40%">Produit *</th>
+                                                <th style="width:15%">Prix unitaire</th>
+                                                <th style="width:10%">TVA</th>
+                                                <th style="width:10%">Quantité *</th>
+                                                <th style="width:15%">Total</th>
+                                                <th style="width:10%"></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="invoiceItemsBody">
+                                            <!-- Les articles seront ajoutés dynamiquement -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <button class="btn btn-sm btn-outline-primary" id="addInvoiceItemBtn"><i class="fas fa-plus me-1"></i> Ajouter un article</button>
+
+                                <div class="row mt-4">
+                                    <div class="col-md-6">
+                                        <label class="form-label">Notes</label>
+                                        <textarea class="form-control" rows="3" id="invoiceNotes" placeholder="Notes pour le client..."></textarea>
+                                        <div class="mt-2">
+                                            <label class="form-label">Conditions de paiement</label>
+                                            <textarea class="form-control" rows="2" id="invoiceTerms" placeholder="Conditions de paiement..."></textarea>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="border p-3">
+                                            <div class="d-flex justify-content-between mb-2">
+                                                <span>Sous-total:</span>
+                                                <span id="invoiceSubtotal">0.00 €</span>
+                                            </div>
+                                            <div class="d-flex justify-content-between mb-2" id="invoiceTaxesContainer">
+                                                <!-- Les taxes seront ajoutées dynamiquement -->
+                                            </div>
+                                            <div class="d-flex justify-content-between mb-2">
+                                                <span>Remise:</span>
+                                                <div class="input-group input-group-sm" style="width: 120px;">
+                                                    <input type="number" class="form-control" id="invoiceDiscount" value="0" min="0" max="100" step="0.01">
+                                                    <span class="input-group-text">%</span>
+                                                </div>
+                                            </div>
+                                            <div class="d-flex justify-content-between fw-bold mt-2 pt-2 border-top">
+                                                <span>Total:</span>
+                                                <span id="invoiceTotal">0.00 €</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="card mb-4">
+                            <div class="card-header bg-white">
+                                <h5 class="mb-0">Produits disponibles</h5>
+                            </div>
+                            <div class="card-body" style="max-height: 400px; overflow-y: auto;" id="availableProductsList">
+                                <!-- Les produits seront chargés dynamiquement -->
+                                <div class="text-center py-4">
+                                    <i class="fas fa-spinner fa-spin"></i>
+                                    <p>Chargement des produits...</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-header bg-white">
+                                <h5 class="mb-0">Aperçu de la facture</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="invoice-preview" id="invoicePreview">
+                                    <!-- L'aperçu sera généré dynamiquement -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Paramètres -->
+            <div id="settings" class="content-section">
+                <h2><i class="fas fa-cog me-2"></i>Paramètres</h2>
+                <p class="text-muted mb-4">Configurez votre application de facturation</p>
+                
+                <ul class="nav nav-tabs mb-4" id="settingsTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="company-tab" data-bs-toggle="tab" data-bs-target="#company-settings" type="button">Entreprise</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="invoice-tab" data-bs-toggle="tab" data-bs-target="#invoice-settings" type="button">Facturation</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="taxes-tab" data-bs-toggle="tab" data-bs-target="#taxes-settings" type="button">Taxes</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="backup-tab" data-bs-toggle="tab" data-bs-target="#backup-settings" type="button">Sauvegarde</button>
+                    </li>
+                </ul>
+                
+                <div class="tab-content" id="settingsTabsContent">
+                    <div class="tab-pane fade show active" id="company-settings" role="tabpanel">
+                        <div class="form-section">
+                            <h3 class="section-title"><i class="fas fa-building"></i> Informations de l'entreprise</h3>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Nom de l'entreprise *</label>
+                                        <input type="text" class="form-control" id="companyName" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">SIRET</label>
+                                        <input type="text" class="form-control" id="companySiret" placeholder="Numéro SIRET">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Adresse *</label>
+                                        <input type="text" class="form-control" id="companyAddress" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Code postal *</label>
+                                        <input type="text" class="form-control" id="companyZip" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Ville *</label>
+                                        <input type="text" class="form-control" id="companyCity" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Téléphone</label>
+                                        <input type="text" class="form-control" id="companyPhone">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Email *</label>
+                                        <input type="email" class="form-control" id="companyEmail" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Site web</label>
+                                        <input type="text" class="form-control" id="companyWebsite">
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="mb-3">
+                                        <label class="form-label">Logo</label>
+                                        <input type="file" class="form-control" id="companyLogo" accept="image/*">
+                                        <div class="mt-2">
+                                            <img src="" alt="Logo" class="logo-preview d-none" id="companyLogoPreview">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="tab-pane fade" id="invoice-settings" role="tabpanel">
+                        <div class="form-section">
+                            <h3 class="section-title"><i class="fas fa-file-invoice"></i> Paramètres de facturation</h3>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Préfixe des numéros de facture *</label>
+                                        <input type="text" class="form-control" id="invoicePrefix" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Prochain numéro de facture *</label>
+                                        <input type="number" class="form-control" id="invoiceNextNumber" required min="1">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Délai de paiement (jours) *</label>
+                                        <input type="number" class="form-control" id="invoiceDueDays" required min="1" value="30">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Devise par défaut *</label>
+                                        <select class="form-select" id="invoiceDefaultCurrency" required>
+                                            <option value="EUR" selected>EUR €</option>
+                                            <option value="USD">USD $</option>
+                                            <option value="GBP">GBP £</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="mb-3">
+                                        <label class="form-label">Notes de bas de page</label>
+                                        <textarea class="form-control" rows="3" id="invoiceFooterNotes"></textarea>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="mb-3">
+                                        <label class="form-label">Conditions de paiement par défaut</label>
+                                        <textarea class="form-control" rows="3" id="invoiceDefaultTerms"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="tab-pane fade" id="taxes-settings" role="tabpanel">
+                        <div class="form-section">
+                            <h3 class="section-title"><i class="fas fa-percentage"></i> Gestion des taxes</h3>
+                            <div class="table-responsive">
+                                <table class="table" id="taxesTable">
+                                    <thead>
+                                        <tr>
+                                            <th>Nom</th>
+                                            <th>Taux (%)</th>
+                                            <th>Par défaut</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><input type="text" class="form-control" value="TVA réduite" id="taxName1"></td>
+                                            <td><input type="number" class="form-control" value="5.5" step="0.1" min="0" max="100" id="taxRate1"></td>
+                                            <td>
+                                                <div class="form-check form-switch">
+                                                    <input class="form-check-input" type="checkbox" id="taxDefault1">
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <button class="btn btn-sm btn-danger remove-tax-btn"><i class="fas fa-trash"></i></button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><input type="text" class="form-control" value="TVA intermédiaire" id="taxName2"></td>
+                                            <td><input type="number" class="form-control" value="10" step="0.1" min="0" max="100" id="taxRate2"></td>
+                                            <td>
+                                                <div class="form-check form-switch">
+                                                    <input class="form-check-input" type="checkbox" id="taxDefault2" checked>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <button class="btn btn-sm btn-danger remove-tax-btn"><i class="fas fa-trash"></i></button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><input type="text" class="form-control" value="TVA normale" id="taxName3"></td>
+                                            <td><input type="number" class="form-control" value="20" step="0.1" min="0" max="100" id="taxRate3"></td>
+                                            <td>
+                                                <div class="form-check form-switch">
+                                                    <input class="form-check-input" type="checkbox" id="taxDefault3">
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <button class="btn btn-sm btn-danger remove-tax-btn"><i class="fas fa-trash"></i></button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <button class="btn btn-sm btn-outline-primary" id="addTaxBtn"><i class="fas fa-plus me-1"></i> Ajouter une taxe</button>
+                        </div>
+                    </div>
+                    
+                    <div class="tab-pane fade" id="backup-settings" role="tabpanel">
+                        <div class="form-section">
+                            <h3 class="section-title"><i class="fas fa-database"></i> Sauvegarde et restauration</h3>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="card mb-4">
+                                        <div class="card-header bg-white">
+                                            <h5 class="mb-0">Sauvegarde des données</h5>
+                                        </div>
+                                        <div class="card-body">
+                                            <p class="text-muted mb-3">Exportez vos données au format JSON pour les sauvegarder.</p>
+                                            <button class="btn btn-outline-primary w-100 mb-2" id="exportClientsBtn">
+                                                <i class="fas fa-file-export me-1"></i> Exporter clients
+                                            </button>
+                                            <button class="btn btn-outline-primary w-100 mb-2" id="exportProductsBtn">
+                                                <i class="fas fa-file-export me-1"></i> Exporter produits
+                                            </button>
+                                            <button class="btn btn-outline-primary w-100" id="exportInvoicesBtn">
+                                                <i class="fas fa-file-export me-1"></i> Exporter factures
+                                            </button>
+                                            <hr>
+                                            <button class="btn btn-primary w-100" id="exportAllBtn">
+                                                <i class="fas fa-file-archive me-1"></i> Exporter toutes les données
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="card">
+                                        <div class="card-header bg-white">
+                                            <h5 class="mb-0">Restauration des données</h5>
+                                        </div>
+                                        <div class="card-body">
+                                            <p class="text-muted mb-3">Importez des données précédemment sauvegardées.</p>
+                                            <div class="mb-3">
+                                                <label class="form-label">Fichier JSON</label>
+                                                <input type="file" class="form-control" id="restoreFile" accept=".json">
+                                            </div>
+                                            <button class="btn btn-success w-100" id="restoreBtn">
+                                                <i class="fas fa-file-import me-1"></i> Restaurer les données
+                                            </button>
+                                            <div class="alert alert-danger mt-3 d-none" id="restoreError"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="text-end mt-4">
+                    <button class="btn btn-primary" id="saveSettingsBtn">
+                        <i class="fas fa-save me-1"></i> Enregistrer les paramètres
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    <!-- Client Modal -->
+    <div class="modal fade" id="clientModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="clientModalTitle">Nouveau client</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="clientForm">
+                        <input type="hidden" id="clientId">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Nom *</label>
+                                    <input type="text" class="form-control" id="clientLastName" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Prénom *</label>
+                                    <input type="text" class="form-control" id="clientFirstName" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Nom de l'entreprise</label>
+                                    <input type="text" class="form-control" id="clientCompany">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Email</label>
+                                    <input type="email" class="form-control" id="clientEmail">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Téléphone</label>
+                                    <input type="text" class="form-control" id="clientPhone">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">SIRET</label>
+                                    <input type="text" class="form-control" id="clientSiret">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Adresse</label>
+                                    <input type="text" class="form-control" id="clientAddress">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Code postal</label>
+                                    <input type="text" class="form-control" id="clientZip">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Ville</label>
+                                    <input type="text" class="form-control" id="clientCity">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Pays</label>
+                                    <input type="text" class="form-control" id="clientCountry" value="France">
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                    <button type="button" class="btn btn-primary" id="saveClientBtn">Enregistrer</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Product Modal -->
+    <div class="modal fade" id="productModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="productModalTitle">Nouveau produit</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="productForm">
+                        <input type="hidden" id="productId">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Nom du produit *</label>
+                                    <input type="text" class="form-control" id="productName" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Référence *</label>
+                                    <input type="text" class="form-control" id="productReference" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Catégorie</label>
+                                    <input type="text" class="form-control" id="productCategory">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Taux de TVA *</label>
+                                    <select class="form-select" id="productTax" required>
+                                        <!-- Les taxes seront chargées dynamiquement -->
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Prix HT *</label>
+                                    <input type="number" class="form-control" id="productPrice" min="0" step="0.01" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Stock initial</label>
+                                    <input type="number" class="form-control" id="productStock" min="0" value="0">
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="mb-3">
+                                    <label class="form-label">Description</label>
+                                    <textarea class="form-control" id="productDescription" rows="3"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                    <button type="button" class="btn btn-primary" id="saveProductBtn">Enregistrer</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Invoice Modal -->
+    <div class="modal fade" id="invoiceModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="invoiceModalTitle">Détails de la facture</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="invoiceModalBody">
+                    <!-- Le contenu sera généré dynamiquement -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+                    <button type="button" class="btn btn-primary" id="printInvoiceBtn"><i class="fas fa-print me-1"></i> Imprimer</button>
+                    <button type="button" class="btn btn-success" id="downloadInvoiceBtn"><i class="fas fa-file-pdf me-1"></i> Télécharger PDF</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div class="modal fade" id="confirmModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="confirmModalTitle">Confirmation</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="confirmModalBody">
+                    Êtes-vous sûr de vouloir effectuer cette action ?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                    <button type="button" class="btn btn-danger" id="confirmActionBtn">Confirmer</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div class="toast-container">
+        <div class="toast align-items-center text-white bg-success" role="alert" aria-live="assertive" aria-atomic="true" id="successToast">
+            <div class="d-flex">
+                <div class="toast-body">
+                    <i class="fas fa-check-circle me-2"></i> <span id="successToastMessage">Opération réussie</span>
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        </div>
+        
+        <div class="toast align-items-center text-white bg-danger" role="alert" aria-live="assertive" aria-atomic="true" id="errorToast">
+            <div class="d-flex">
+                <div class="toast-body">
+                    <i class="fas fa-exclamation-circle me-2"></i> <span id="errorToastMessage">Une erreur est survenue</span>
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.1/chart.min.js"></script>
+    <script src="/script.js"></script>
+    <script>
+        // Initialisation des objets JS
+        const { jsPDF } = window.jspdf;
+        
+        // Données de l'application
+        let appData = {
+            clients: [],
+            products: [],
+            invoices: [],
+            settings: {
+                company: {
+                    name: "EasyFacture Pro",
+                    siret: "",
+                    address: "123 Rue du Commerce",
+                    zip: "75001",
+                    city: "Paris",
+                    phone: "01 23 45 67 89",
+                    email: "contact@easyfacture.fr",
+                    website: "www.easyfacture.fr",
+                    logo: ""
+                },
+                invoice: {
+                    prefix: "INV",
+                    nextNumber: 1,
+                    dueDays: 30,
+                    defaultCurrency: "EUR",
+                    footerNotes: "Merci pour votre confiance. Paiement par virement bancaire ou chèque.",
+                    defaultTerms: "Paiement sous 30 jours fin de mois."
+                },
+                taxes: [
+                    { name: "TVA réduite", rate: 5.5, default: false },
+                    { name: "TVA intermédiaire", rate: 10, default: true },
+                    { name: "TVA normale", rate: 20, default: false }
+                ]
+            },
+            currentInvoice: {
+                items: [],
+                clientId: null,
+                date: new Date().toISOString().split('T')[0],
+                dueDate: "",
+                currency: "EUR",
+                notes: "",
+                terms: "",
+                discount: 0,
+                status: "pending"
+            }
+        };
+        
+        // Éléments UI
+        const UI = {
+            modals: {
+                client: new bootstrap.Modal(document.getElementById('clientModal')),
+                product: new bootstrap.Modal(document.getElementById('productModal')),
+                invoice: new bootstrap.Modal(document.getElementById('invoiceModal')),
+                confirm: new bootstrap.Modal(document.getElementById('confirmModal'))
+            },
+            toasts: {
+                success: new bootstrap.Toast(document.getElementById('successToast')),
+                error: new bootstrap.Toast(document.getElementById('errorToast'))
+            }
+        };
+        
+        // État de l'application
+        let appState = {
+            editingClientId: null,
+            editingProductId: null,
+            editingInvoiceId: null,
+            confirmAction: null,
+            confirmCallback: null
+        };
+        
+        // Initialisation de l'application
+        document.addEventListener('DOMContentLoaded', function() {
+            // Charger les données depuis le localStorage
+            loadData();
+            
+            // Initialiser les écouteurs d'événements
+            initEventListeners();
+            
+            // Mettre à jour l'interface
+            updateUI();
+            
+            // Générer la date du jour pour la nouvelle facture
+            document.getElementById('invoiceDateDisplay').textContent = formatDate(appData.currentInvoice.date);
+            
+            // Calculer la date d'échéance par défaut
+            const dueDate = new Date(appData.currentInvoice.date);
+            dueDate.setDate(dueDate.getDate() + appData.settings.invoice.dueDays);
+            appData.currentInvoice.dueDate = dueDate.toISOString().split('T')[0];
+            document.getElementById('invoiceDueDate').value = appData.currentInvoice.dueDate;
+            
+            // Mettre à jour le numéro de facture
+            updateInvoiceNumber();
+        });
+        
+        // Fonctions de gestion des données
+        function loadData() {
+            const savedData = localStorage.getItem('easyFactureData');
+            if (savedData) {
+                appData = JSON.parse(savedData);
+            } else {
+                // Données exemple pour la démo
+                appData.clients = [
+                    {
+                        id: 1,
+                        firstName: "Jean",
+                        lastName: "Dupont",
+                        company: "Boulangerie DuPont",
+                        email: "jean@boulangerie.com",
+                        phone: "01 23 45 67 89",
+                        address: "12 Rue de la Paix",
+                        zip: "75002",
+                        city: "Paris",
+                        country: "France",
+                        siret: "12345678901234",
+                        createdAt: "2023-01-15"
+                    },
+                    {
+                        id: 2,
+                        firstName: "Marie",
+                        lastName: "Lambert",
+                        company: "Café des Arts",
+                        email: "marie@cafe-arts.fr",
+                        phone: "01 34 56 78 90",
+                        address: "45 Avenue des Champs-Élysées",
+                        zip: "75008",
+                        city: "Paris",
+                        country: "France",
+                        siret: "23456789012345",
+                        createdAt: "2023-02-20"
+                    },
+                    {
+                        id: 3,
+                        firstName: "Thomas",
+                        lastName: "Petit",
+                        company: "Epicerie Le Marché",
+                        email: "thomas@epicerie-marche.com",
+                        phone: "01 45 67 89 01",
+                        address: "8 Rue du Commerce",
+                        zip: "75009",
+                        city: "Paris",
+                        country: "France",
+                        siret: "34567890123456",
+                        createdAt: "2023-03-10"
+                    }
+                ];
+                
+                appData.products = [
+                    {
+                        id: 1,
+                        name: "Pain au chocolat (lot de 20)",
+                        reference: "PROD-001",
+                        category: "Viennoiseries",
+                        price: 12.50,
+                        taxId: 1, // TVA 10%
+                        stock: 15,
+                        description: "Lot de 20 pains au chocolat frais",
+                        createdAt: "2023-01-10"
+                    },
+                    {
+                        id: 2,
+                        name: "Croissant (lot de 20)",
+                        reference: "PROD-002",
+                        category: "Viennoiseries",
+                        price: 10.00,
+                        taxId: 1, // TVA 10%
+                        stock: 22,
+                        description: "Lot de 20 croissants frais",
+                        createdAt: "2023-01-10"
+                    },
+                    {
+                        id: 3,
+                        name: "Bagette tradition",
+                        reference: "PROD-003",
+                        category: "Pains",
+                        price: 0.95,
+                        taxId: 0, // TVA 5.5%
+                        stock: 120,
+                        description: "Bagette de pain traditionnel",
+                        createdAt: "2023-01-15"
+                    },
+                    {
+                        id: 4,
+                        name: "Pain de campagne",
+                        reference: "PROD-004",
+                        category: "Pains",
+                        price: 1.20,
+                        taxId: 0, // TVA 5.5%
+                        stock: 85,
+                        description: "Pain de campagne au levain",
+                        createdAt: "2023-01-15"
+                    }
+                ];
+                
+                appData.invoices = [
+                    {
+                        id: 1,
+                        number: "INV-2023-001",
+                        clientId: 1,
+                        date: "2023-06-15",
+                        dueDate: "2023-06-30",
+                        items: [
+                            { productId: 1, quantity: 2, price: 12.50, taxId: 1 },
+                            { productId: 2, quantity: 1, price: 10.00, taxId: 1 }
+                        ],
+                        currency: "EUR",
+                        notes: "Livraison prévue le 16/06/2023",
+                        terms: "Paiement sous 30 jours",
+                        discount: 0,
+                        status: "paid",
+                        createdAt: "2023-06-15"
+                    },
+                    {
+                        id: 2,
+                        number: "INV-2023-002",
+                        clientId: 2,
+                        date: "2023-06-14",
+                        dueDate: "2023-06-24",
+                        items: [
+                            { productId: 1, quantity: 1, price: 12.50, taxId: 1 },
+                            { productId: 3, quantity: 10, price: 0.95, taxId: 0 }
+                        ],
+                        currency: "EUR",
+                        notes: "",
+                        terms: "Paiement sous 10 jours",
+                        discount: 0,
+                        status: "pending",
+                        createdAt: "2023-06-14"
+                    },
+                    {
+                        id: 3,
+                        number: "INV-2023-003",
+                        clientId: 3,
+                        date: "2023-06-12",
+                        dueDate: "2023-06-22",
+                        items: [
+                            { productId: 4, quantity: 20, price: 1.20, taxId: 0 },
+                            { productId: 2, quantity: 2, price: 10.00, taxId: 1 }
+                        ],
+                        currency: "EUR",
+                        notes: "Livraison tous les matins à 7h",
+                        terms: "Paiement sous 10 jours",
+                        discount: 5,
+                        status: "paid",
+                        createdAt: "2023-06-12"
+                    }
+                ];
+                
+                saveData();
+            }
+        }
+        
+        function saveData() {
+            localStorage.setItem('easyFactureData', JSON.stringify(appData));
+        }
+        
+        function exportData(type) {
+            let data, filename;
+            
+            switch(type) {
+                case 'clients':
+                    data = JSON.stringify(appData.clients);
+                    filename = `easyfacture_clients_${new Date().toISOString().split('T')[0]}.json`;
+                    break;
+                case 'products':
+                    data = JSON.stringify(appData.products);
+                    filename = `easyfacture_products_${new Date().toISOString().split('T')[0]}.json`;
+                    break;
+                case 'invoices':
+                    data = JSON.stringify(appData.invoices);
+                    filename = `easyfacture_invoices_${new Date().toISOString().split('T')[0]}.json`;
+                    break;
+                case 'all':
+                    data = JSON.stringify(appData);
+                    filename = `easyfacture_backup_${new Date().toISOString().split('T')[0]}.json`;
+                    break;
+                default:
+                    return;
+            }
+            
+            const blob = new Blob([data], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            showToast('success', 'Export réussi');
+        }
+        
+        function importData(file, type) {
+            const reader = new FileReader();
+            
+            reader.onload = function(e) {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    
+                    switch(type) {
+                        case 'clients':
+                            if (Array.isArray(data)) {
+                                appData.clients = data;
+                                showToast('success', 'Clients importés avec succès');
+                            } else {
+                                throw new Error('Format de fichier invalide');
+                            }
+                            break;
+                        case 'products':
+                            if (Array.isArray(data)) {
+                                appData.products = data;
+                                showToast('success', 'Produits importés avec succès');
+                            } else {
+                                throw new Error('Format de fichier invalide');
+                            }
+                            break;
+                        case 'invoices':
+                            if (Array.isArray(data)) {
+                                appData.invoices = data;
+                                showToast('success', 'Factures importées avec succès');
+                            } else {
+                                throw new Error('Format de fichier invalide');
+                            }
+                            break;
+                        case 'all':
+                            if (data.clients && data.products && data.invoices && data.settings) {
+                                appData = data;
+                                showToast('success', 'Toutes les données ont été restaurées');
+                            } else {
+                                throw new Error('Format de fichier invalide');
+                            }
+                            break;
+                        default:
+                            throw new Error('Type de données inconnu');
+                    }
+                    
+                    saveData();
+                    updateUI();
+                } catch (error) {
+                    console.error(error);
+                    document.getElementById('restoreError').textContent = `Erreur: ${error.message}`;
+                    document.getElementById('restoreError').classList.remove('d-none');
+                }
+            };
+            
+            reader.onerror = function() {
+                document.getElementById('restoreError').textContent = 'Erreur lors de la lecture du fichier';
+                document.getElementById('restoreError').classList.remove('d-none');
+            };
+            
+            reader.readAsText(file);
+        }
+        
+        // Fonctions utilitaires
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('fr-FR');
+        }
+        
+        function formatCurrency(amount, currency = 'EUR') {
+            return new Intl.NumberFormat('fr-FR', { style: 'currency', currency }).format(amount);
+        }
+        
+        function generateInvoiceNumber() {
+            const prefix = appData.settings.invoice.prefix || 'INV';
+            const year = new Date().getFullYear();
+            const number = appData.settings.invoice.nextNumber || 1;
+            
+            return `${prefix}-${year}-${number.toString().padStart(3, '0')}`;
+        }
+        
+        function updateInvoiceNumber() {
+            document.getElementById('invoiceNumberDisplay').textContent = generateInvoiceNumber();
+        }
+        
+        function calculateInvoiceTotals() {
+            let subtotal = 0;
+            const taxes = {};
+            
+            // Calculer le sous-total et regrouper les taxes
+            appData.currentInvoice.items.forEach(item => {
+                const product = appData.products.find(p => p.id === item.productId);
+                if (product) {
+                    const itemTotal = item.quantity * item.price;
+                    subtotal += itemTotal;
+                    
+                    const tax = appData.settings.taxes[item.taxId];
+                    if (tax) {
+                        if (!taxes[tax.rate]) {
+                            taxes[tax.rate] = {
+                                name: tax.name,
+                                rate: tax.rate,
+                                amount: 0
+                            };
+                        }
+                        taxes[tax.rate].amount += itemTotal * (tax.rate / 100);
+                    }
+                }
+            });
+            
+            // Appliquer la remise
+            const discount = appData.currentInvoice.discount || 0;
+            const discountAmount = subtotal * (discount / 100);
+            const totalBeforeTax = subtotal - discountAmount;
+            
+            // Calculer le total des taxes
+            let totalTax = 0;
+            Object.values(taxes).forEach(tax => {
+                totalTax += tax.amount;
+            });
+            
+            // Calculer le total final
+            const total = totalBeforeTax + totalTax;
+            
+            // Mettre à jour l'interface
+            document.getElementById('invoiceSubtotal').textContent = formatCurrency(subtotal, appData.currentInvoice.currency);
+            
+            const taxesContainer = document.getElementById('invoiceTaxesContainer');
+            taxesContainer.innerHTML = '';
+            
+            Object.values(taxes).forEach(tax => {
+                const taxRow = document.createElement('div');
+                taxRow.className = 'd-flex justify-content-between mb-2';
+                taxRow.innerHTML = `<span>TVA (${tax.name} ${tax.rate}%):</span><span>${formatCurrency(tax.amount, appData.currentInvoice.currency)}</span>`;
+                taxesContainer.appendChild(taxRow);
+            });
+            
+            document.getElementById('invoiceTotal').textContent = formatCurrency(total, appData.currentInvoice.currency);
+            
+            // Mettre à jour l'aperçu
+            updateInvoicePreview();
+        }
+        
+        function updateInvoicePreview() {
+            const client = appData.clients.find(c => c.id === appData.currentInvoice.clientId);
+            const preview = document.getElementById('invoicePreview');
+            
+            if (!preview) return;
+            
+            let itemsHtml = '';
+            let subtotal = 0;
+            const taxes = {};
+            
+            appData.currentInvoice.items.forEach(item => {
+                const product = appData.products.find(p => p.id === item.productId);
+                if (product) {
+                    const itemTotal = item.quantity * item.price;
+                    subtotal += itemTotal;
+                    
+                    const tax = appData.settings.taxes[item.taxId];
+                    if (tax) {
+                        if (!taxes[tax.rate]) {
+                            taxes[tax.rate] = {
+                                name: tax.name,
+                                rate: tax.rate,
+                                amount: 0
+                            };
+                        }
+                        taxes[tax.rate].amount += itemTotal * (tax.rate / 100);
+                    }
+                    
+                    itemsHtml += `
+                        <tr>
+                            <td>${product.name}</td>
+                            <td>${formatCurrency(item.price, appData.currentInvoice.currency)}</td>
+                            <td>${item.quantity}</td>
+                            <td>${formatCurrency(itemTotal, appData.currentInvoice.currency)}</td>
+                        </tr>
+                    `;
+                }
+            });
+            
+            const discount = appData.currentInvoice.discount || 0;
+            const discountAmount = subtotal * (discount / 100);
+            const totalBeforeTax = subtotal - discountAmount;
+            
+            let totalTax = 0;
+            let taxesHtml = '';
+            Object.values(taxes).forEach(tax => {
+                totalTax += tax.amount;
+                taxesHtml += `
+                    <div class="d-flex justify-content-between">
+                        <span>TVA (${tax.name} ${tax.rate}%):</span>
+                        <span>${formatCurrency(tax.amount, appData.currentInvoice.currency)}</span>
+                    </div>
+                `;
+            });
+            
+            const total = totalBeforeTax + totalTax;
+            
+            preview.innerHTML = `
+                <div class="invoice-header">
+                    <div class="row">
+                        <div class="col-6">
+                            <h3 class="text-primary">${appData.settings.company.name}</h3>
+                            <div>${appData.settings.company.address}</div>
+                            <div>${appData.settings.company.zip} ${appData.settings.company.city}</div>
+                            <div>Tél: ${appData.settings.company.phone}</div>
+                        </div>
+                        <div class="col-6 text-end">
+                            <h3>FACTURE</h3>
+                            <div>N°: ${generateInvoiceNumber()}</div>
+                            <div>Date: ${formatDate(appData.currentInvoice.date)}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mb-4">
+                    <div class="col-6">
+                        <h5>Facturé à:</h5>
+                        <div><strong>${client ? client.company || `${client.firstName} ${client.lastName}` : 'Non spécifié'}</strong></div>
+                        ${client ? `
+                            <div>${client.firstName} ${client.lastName}</div>
+                            <div>${client.address}</div>
+                            <div>${client.zip} ${client.city}</div>
+                        ` : ''}
+                    </div>
+                    <div class="col-6 text-end">
+                        <h5>Échéance:</h5>
+                        <div class="fs-5">${formatDate(appData.currentInvoice.dueDate)}</div>
+                        <div class="mt-3">
+                            <h5>Total dû:</h5>
+                            <div class="fs-4 fw-bold">${formatCurrency(total, appData.currentInvoice.currency)}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <table class="table invoice-table">
+                    <thead>
+                        <tr>
+                            <th>Description</th>
+                            <th>Prix unitaire</th>
+                            <th>Qté</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${itemsHtml}
+                    </tbody>
+                </table>
+
+                <div class="row mt-4">
+                    <div class="col-7">
+                        ${appData.currentInvoice.notes ? `
+                            <div class="fw-bold">Notes:</div>
+                            <div>${appData.currentInvoice.notes}</div>
+                        ` : ''}
+                        ${appData.currentInvoice.terms ? `
+                            <div class="fw-bold mt-2">Conditions de paiement:</div>
+                            <div>${appData.currentInvoice.terms}</div>
+                        ` : ''}
+                    </div>
+                    <div class="col-5">
+                        <div class="d-flex justify-content-between">
+                            <span>Sous-total:</span>
+                            <span>${formatCurrency(subtotal, appData.currentInvoice.currency)}</span>
+                        </div>
+                        ${taxesHtml}
+                        ${discount > 0 ? `
+                            <div class="d-flex justify-content-between">
+                                <span>Remise (${discount}%):</span>
+                                <span>-${formatCurrency(discountAmount, appData.currentInvoice.currency)}</span>
+                            </div>
+                        ` : ''}
+                        <div class="d-flex justify-content-between fw-bold mt-2 pt-2 border-top">
+                            <span>Total:</span>
+                            <span>${formatCurrency(total, appData.currentInvoice.currency)}</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+        
+        function generatePdf() {
+            const doc = new jsPDF();
+            
+            // En-tête
+            doc.setFontSize(18);
+            doc.setTextColor(37, 99, 235);
+            doc.text(appData.settings.company.name, 15, 20);
+            
+            doc.setFontSize(10);
+            doc.setTextColor(0, 0, 0);
+            doc.text(appData.settings.company.address, 15, 28);
+            doc.text(`${appData.settings.company.zip} ${appData.settings.company.city}`, 15, 32);
+            doc.text(`Tél: ${appData.settings.company.phone}`, 15, 36);
+            
+            // Titre et numéro de facture
+            doc.setFontSize(16);
+            doc.text('FACTURE', 170, 20, { align: 'right' });
+            doc.setFontSize(10);
+            doc.text(`N°: ${generateInvoiceNumber()}`, 170, 28, { align: 'right' });
+            doc.text(`Date: ${formatDate(appData.currentInvoice.date)}`, 170, 32, { align: 'right' });
+            
+            // Client
+            const client = appData.clients.find(c => c.id === appData.currentInvoice.clientId);
+            doc.setFontSize(12);
+            doc.text('Facturé à:', 15, 50);
+            doc.setFontSize(10);
+            doc.text(client ? client.company || `${client.firstName} ${client.lastName}` : 'Non spécifié', 15, 56);
+            
+            if (client) {
+                doc.text(`${client.firstName} ${client.lastName}`, 15, 60);
+                doc.text(client.address, 15, 64);
+                doc.text(`${client.zip} ${client.city}`, 15, 68);
+            }
+            
+            // Échéance
+            doc.setFontSize(12);
+            doc.text('Échéance:', 170, 50, { align: 'right' });
+            doc.setFontSize(10);
+            doc.text(formatDate(appData.currentInvoice.dueDate), 170, 56, { align: 'right' });
+            
+            // Articles
+            doc.autoTable({
+                startY: 80,
+                head: [['Description', 'Prix unitaire', 'Qté', 'Total']],
+                body: appData.currentInvoice.items.map(item => {
+                    const product = appData.products.find(p => p.id === item.productId);
+                    return [
+                        product?.name || 'Produit inconnu',
+                        formatCurrency(item.price, appData.currentInvoice.currency),
+                        item.quantity,
+                        formatCurrency(item.price * item.quantity, appData.currentInvoice.currency)
+                    ];
+                }),
+                styles: { fontSize: 10 },
+                headStyles: { fillColor: [241, 245, 249] }
+            });
+            
+            // Totaux
+            let subtotal = 0;
+            const taxes = {};
+            
+            appData.currentInvoice.items.forEach(item => {
+                const product = appData.products.find(p => p.id === item.productId);
+                if (product) {
+                    const itemTotal = item.quantity * item.price;
+                    subtotal += itemTotal;
+                    
+                    const tax = appData.settings.taxes[item.taxId];
+                    if (tax) {
+                        if (!taxes[tax.rate]) {
+                            taxes[tax.rate] = {
+                                name: tax.name,
+                                rate: tax.rate,
+                                amount: 0
+                            };
+                        }
+                        taxes[tax.rate].amount += itemTotal * (tax.rate / 100);
+                    }
+                }
+            });
+            
+            const discount = appData.currentInvoice.discount || 0;
+            const discountAmount = subtotal * (discount / 100);
+            const totalBeforeTax = subtotal - discountAmount;
+            
+            let totalTax = 0;
+            Object.values(taxes).forEach(tax => {
+                totalTax += tax.amount;
+            });
+            
+            const total = totalBeforeTax + totalTax;
+            
+            const finalY = doc.lastAutoTable.finalY + 10;
+            
+            doc.setFontSize(10);
+            doc.text('Sous-total:', 140, finalY, { align: 'right' });
+            doc.text(formatCurrency(subtotal, appData.currentInvoice.currency), 190, finalY, { align: 'right' });
+            
+            let taxY = finalY + 6;
+            Object.values(taxes).forEach(tax => {
+                doc.text(`TVA (${tax.name} ${tax.rate}%):`, 140, taxY, { align: 'right' });
+                doc.text(formatCurrency(tax.amount, appData.currentInvoice.currency), 190, taxY, { align: 'right' });
+                taxY += 6;
+            });
+            
+            if (discount > 0) {
+                doc.text(`Remise (${discount}%):`, 140, taxY, { align: 'right' });
+                doc.text(`-${formatCurrency(discountAmount, appData.currentInvoice.currency)}`, 190, taxY, { align: 'right' });
+                taxY += 6;
+            }
+            
+            doc.setFontSize(12);
+            doc.setFont(undefined, 'bold');
+            doc.text('Total:', 140, taxY + 4, { align: 'right' });
+            doc.text(formatCurrency(total, appData.currentInvoice.currency), 190, taxY + 4, { align: 'right' });
+            
+            // Notes
+            if (appData.currentInvoice.notes || appData.currentInvoice.terms) {
+                doc.setFont(undefined, 'normal');
+                doc.setFontSize(10);
+                
+                let notesY = taxY + 16;
+                
+                if (appData.currentInvoice.notes) {
+                    doc.setFont(undefined, 'bold');
+                    doc.text('Notes:', 15, notesY);
+                    doc.setFont(undefined, 'normal');
+                    doc.text(appData.currentInvoice.notes, 15, notesY + 6);
+                    notesY += 12;
+                }
+                
+                if (appData.currentInvoice.terms) {
+                    doc.setFont(undefined, 'bold');
+                    doc.text('Conditions de paiement:', 15, notesY);
+                    doc.setFont(undefined, 'normal');
+                    doc.text(appData.currentInvoice.terms, 15, notesY + 6);
+                }
+            }
+            
+            // Enregistrer le PDF
+            doc.save(`${generateInvoiceNumber()}.pdf`);
+            showToast('success', 'PDF généré avec succès');
+        }
+        
+        function showToast(type, message) {
+            const toast = type === 'success' ? UI.toasts.success : UI.toasts.error;
+            const toastElement = type === 'success' ? document.getElementById('successToastMessage') : document.getElementById('errorToastMessage');
+            
+            toastElement.textContent = message;
+            toast.show();
+        }
+        
+        function confirmAction(message, callback) {
+            document.getElementById('confirmModalBody').textContent = message;
+            appState.confirmCallback = callback;
+            UI.modals.confirm.show();
+        }
+        
+        // Fonctions de mise à jour de l'interface
+        function updateUI() {
+            updateDashboard();
+            updateClientsList();
+            updateProductsList();
+            updateInvoicesList();
+            updateSettingsForm();
+            updateNewInvoiceForm();
+        }
+        
+        function updateDashboard() {
+            // Statistiques
+            const today = new Date().toISOString().split('T')[0];
+            const currentMonth = new Date().getMonth() + 1;
+            const currentYear = new Date().getFullYear();
+            
+            // Chiffre d'affaires
+            const monthlyRevenue = appData.invoices
+                .filter(inv => new Date(inv.date).getMonth() + 1 === currentMonth && 
+                              new Date(inv.date).getFullYear() === currentYear)
+                .reduce((sum, inv) => {
+                    const subtotal = inv.items.reduce((s, item) => s + (item.price * item.quantity), 0);
+                    const discount = subtotal * (inv.discount / 100);
+                    const taxes = inv.items.reduce((t, item) => {
+                        const tax = appData.settings.taxes[item.taxId];
+                        return t + (item.price * item.quantity * (tax?.rate || 0) / 100);
+                    }, 0);
+                    
+                    return sum + (subtotal - discount + taxes);
+                }, 0);
+            
+            // Nombre de factures ce mois
+            const monthlyInvoices = appData.invoices
+                .filter(inv => new Date(inv.date).getMonth() + 1 === currentMonth && 
+                              new Date(inv.date).getFullYear() === currentYear)
+                .length;
+            
+            // Nombre de clients
+            const clientsCount = appData.clients.length;
+            
+            // Nombre de factures impayées
+            const unpaidInvoices = appData.invoices
+                .filter(inv => inv.status === 'unpaid')
+                .length;
+            
+            // Montant des impayés
+            const unpaidAmount = appData.invoices
+                .filter(inv => inv.status === 'unpaid')
+                .reduce((sum, inv) => {
+                    const subtotal = inv.items.reduce((s, item) => s + (item.price * item.quantity), 0);
+                    const discount = subtotal * (inv.discount / 100);
+                    const taxes = inv.items.reduce((t, item) => {
+                        const tax = appData.settings.taxes[item.taxId];
+                        return t + (item.price * item.quantity * (tax?.rate || 0) / 100);
+                    }, 0);
+                    
+                    return sum + (subtotal - discount + taxes);
+                }, 0);
+            
+            // Mettre à jour les cartes de statistiques
+            document.getElementById('statsCards').innerHTML = `
+                <div class="col-md-3 col-sm-6 mb-3">
+                    <div class="card stat-card">
+                        <i class="fas fa-file-invoice-dollar"></i>
+                        <h4>Chiffre d'affaires</h4>
+                        <div class="number">${formatCurrency(monthlyRevenue)}</div>
+                        <div class="text-success mt-2"><i class="fas fa-arrow-up"></i> 12.5%</div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-6 mb-3">
+                    <div class="card stat-card">
+                        <i class="fas fa-receipt"></i>
+                        <h4>Factures</h4>
+                        <div class="number">${monthlyInvoices}</div>
+                        <div class="mt-2">Ce mois</div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-6 mb-3">
+                    <div class="card stat-card">
+                        <i class="fas fa-users"></i>
+                        <h4>Clients</h4>
+                        <div class="number">${clientsCount}</div>
+                        <div class="text-success mt-2"><i class="fas fa-plus"></i> 3 nouveaux</div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-6 mb-3">
+                    <div class="card stat-card">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <h4>Impayés</h4>
+                        <div class="number">${unpaidInvoices}</div>
+                        <div class="text-danger mt-2">${formatCurrency(unpaidAmount)}</div>
+                    </div>
+                </div>
+            `;
+            
+            // Factures récentes
+            const recentInvoices = [...appData.invoices]
+                .sort((a, b) => new Date(b.date) - new Date(a.date))
+                .slice(0, 5);
+            
+            const invoicesTableBody = document.querySelector('#recentInvoicesTable tbody');
+            invoicesTableBody.innerHTML = recentInvoices.map(invoice => {
+                const client = appData.clients.find(c => c.id === invoice.clientId);
+                const subtotal = invoice.items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+                const discount = subtotal * (invoice.discount / 100);
+                const taxes = invoice.items.reduce((sum, item) => {
+                    const tax = appData.settings.taxes[item.taxId];
+                    return sum + (item.price * item.quantity * (tax?.rate || 0) / 100);
+                }, 0);
+                const total = subtotal - discount + taxes;
+                
+                let statusClass = '';
+                if (invoice.status === 'paid') statusClass = 'status-paid';
+                else if (invoice.status === 'pending') statusClass = 'status-pending';
+                else statusClass = 'status-unpaid';
+                
+                let statusText = '';
+                if (invoice.status === 'paid') statusText = 'Payée';
+                else if (invoice.status === 'pending') statusText = 'En attente';
+                else statusText = 'Impayée';
+                
+                return `
+                    <tr>
+                        <td>${invoice.number}</td>
+                        <td>${client ? client.company || `${client.firstName} ${client.lastName}` : 'Client inconnu'}</td>
+                        <td>${formatDate(invoice.date)}</td>
+                        <td>${formatCurrency(total, invoice.currency)}</td>
+                        <td><span class="invoice-status ${statusClass}">${statusText}</span></td>
+                    </tr>
+                `;
+            }).join('');
+            
+            // Clients récents
+            const recentClients = [...appData.clients]
+                .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+                .slice(0, 4);
+            
+            const clientsList = document.getElementById('recentClientsList');
+            clientsList.innerHTML = recentClients.map(client => {
+                const initials = (client.firstName.charAt(0) + client.lastName.charAt(0)).toUpperCase();
+                const colors = ['bg-primary', 'bg-success', 'bg-info', 'bg-warning', 'bg-danger'];
+                const randomColor = colors[Math.floor(Math.random() * colors.length)];
+                
+                return `
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="avatar ${randomColor} text-white">${initials}</div>
+                        <div class="ms-3">
+                            <strong>${client.firstName} ${client.lastName}</strong>
+                            <div class="text-muted small">${client.company || 'Aucune entreprise'}</div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        function updateClientsList() {
+            const clientsTableBody = document.querySelector('#clientsTable tbody');
+            clientsTableBody.innerHTML = appData.clients.map(client => {
+                const clientInvoices = appData.invoices.filter(inv => inv.clientId === client.id).length;
+                
+                return `
+                    <tr>
+                        <td>${client.firstName} ${client.lastName}</td>
+                        <td>${client.company || '-'}</td>
+                        <td>${client.phone || '-'}</td>
+                        <td>${client.email || '-'}</td>
+                        <td>${clientInvoices}</td>
+                        <td>
+                            <div class="action-buttons">
+                                <button class="btn btn-sm btn-outline-primary edit-client-btn" data-id="${client.id}">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="btn btn-sm btn-outline-success create-invoice-btn" data-id="${client.id}">
+                                    <i class="fas fa-file-invoice"></i>
+                                </button>
+                                <button class="btn btn-sm btn-outline-danger delete-client-btn" data-id="${client.id}">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+        
+        function updateProductsList() {
+            const productsTableBody = document.querySelector('#productsTable tbody');
+            productsTableBody.innerHTML = appData.products.map(product => {
+                const tax = appData.settings.taxes[product.taxId];
+                let stockBadge = 'bg-success';
+                if (product.stock <= 0) stockBadge = 'bg-danger';
+                else if (product.stock <= 5) stockBadge = 'bg-warning';
+                
+                return `
+                    <tr>
+                        <td>${product.name}</td>
+                        <td>${product.reference}</td>
+                        <td>${formatCurrency(product.price)}</td>
+                        <td>${tax ? tax.name + ' ' + tax.rate + '%' : 'Aucune'}</td>
+                        <td>
+                            <span class="badge ${stockBadge}">${product.stock}</span>
+                        </td>
+                        <td>
+                            <div class="action-buttons">
+                                <button class="btn btn-sm btn-outline-primary edit-product-btn" data-id="${product.id}">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="btn btn-sm btn-outline-danger delete-product-btn" data-id="${product.id}">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+            
+            // Statistiques des produits
+            const totalProducts = appData.products.length;
+            const inStockProducts = appData.products.filter(p => p.stock > 5).length;
+            const lowStockProducts = appData.products.filter(p => p.stock > 0 && p.stock <= 5).length;
+            const outOfStockProducts = appData.products.filter(p => p.stock <= 0).length;
+            
+            document.getElementById('productsInStock').textContent = `${inStockProducts}/${totalProducts}`;
+            document.getElementById('productsLowStock').textContent = `${lowStockProducts}/${totalProducts}`;
+            document.getElementById('productsOutOfStock').textContent = `${outOfStockProducts}/${totalProducts}`;
+            
+            document.getElementById('inStockProgress').style.width = `${(inStockProducts / totalProducts) * 100}%`;
+            document.getElementById('lowStockProgress').style.width = `${(lowStockProducts / totalProducts) * 100}%`;
+            document.getElementById('outOfStockProgress').style.width = `${(outOfStockProducts / totalProducts) * 100}%`;
+            
+            // Graphique des catégories (simplifié pour cet exemple)
+            const categories = {};
+            appData.products.forEach(product => {
+                const category = product.category || 'Non catégorisé';
+                categories[category] = (categories[category] || 0) + 1;
+            });
+            
+            // Dans une application réelle, nous utiliserions Chart.js pour un vrai graphique
+            const chartContainer = document.getElementById('productCategoriesChart');
+            chartContainer.innerHTML = `
+                <div class="text-center py-2">
+                    <div class="d-flex flex-wrap justify-content-center">
+                        ${Object.entries(categories).map(([category, count]) => `
+                            <div class="m-2 p-2 border rounded">
+                                <div class="fw-bold">${category}</div>
+                                <div>${count} produit(s)</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }
+        
+        function updateInvoicesList() {
+            const invoicesTableBody = document.querySelector('#invoicesTable tbody');
+            invoicesTableBody.innerHTML = appData.invoices.map(invoice => {
+                const client = appData.clients.find(c => c.id === invoice.clientId);
+                const subtotal = invoice.items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+                const discount = subtotal * (invoice.discount / 100);
+                const taxes = invoice.items.reduce((sum, item) => {
+                    const tax = appData.settings.taxes[item.taxId];
+                    return sum + (item.price * item.quantity * (tax?.rate || 0) / 100);
+                }, 0);
+                const total = subtotal - discount + taxes;
+                
+                let statusClass = '';
+                if (invoice.status === 'paid') statusClass = 'status-paid';
+                else if (invoice.status === 'pending') statusClass = 'status-pending';
+                else statusClass = 'status-unpaid';
+                
+                let statusText = '';
+                if (invoice.status === 'paid') statusText = 'Payée';
+                else if (invoice.status === 'pending') statusText = 'En attente';
+                else statusText = 'Impayée';
+                
+                return `
+                    <tr>
+                        <td>${invoice.number}</td>
+                        <td>${client ? client.company || `${client.firstName} ${client.lastName}` : 'Client inconnu'}</td>
+                        <td>${formatDate(invoice.date)}</td>
+                        <td>${formatCurrency(total, invoice.currency)}</td>
+                        <td>${formatDate(invoice.dueDate)}</td>
+                        <td><span class="invoice-status ${statusClass}">${statusText}</span></td>
+                        <td>
+                            <div class="action-buttons">
+                                <button class="btn btn-sm btn-outline-primary view-invoice-btn" data-id="${invoice.id}">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="btn btn-sm btn-outline-success download-invoice-btn" data-id="${invoice.id}">
+                                    <i class="fas fa-file-pdf"></i>
+                                </button>
+                                <button class="btn btn-sm btn-outline-secondary email-invoice-btn" data-id="${invoice.id}">
+                                    <i class="fas fa-envelope"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+        
+        function updateSettingsForm() {
+            // Informations de l'entreprise
+            document.getElementById('companyName').value = appData.settings.company.name;
+            document.getElementById('companySiret').value = appData.settings.company.siret;
+            document.getElementById('companyAddress').value = appData.settings.company.address;
+            document.getElementById('companyZip').value = appData.settings.company.zip;
+            document.getElementById('companyCity').value = appData.settings.company.city;
+            document.getElementById('companyPhone').value = appData.settings.company.phone;
+            document.getElementById('companyEmail').value = appData.settings.company.email;
+            document.getElementById('companyWebsite').value = appData.settings.company.website;
+            
+            // Paramètres de facturation
+            document.getElementById('invoicePrefix').value = appData.settings.invoice.prefix;
+            document.getElementById('invoiceNextNumber').value = appData.settings.invoice.nextNumber;
+            document.getElementById('invoiceDueDays').value = appData.settings.invoice.dueDays;
+            document.getElementById('invoiceDefaultCurrency').value = appData.settings.invoice.defaultCurrency;
+            document.getElementById('invoiceFooterNotes').value = appData.settings.invoice.footerNotes;
+            document.getElementById('invoiceDefaultTerms').value = appData.settings.invoice.defaultTerms;
+            
+            // Taxes
+            const taxesTableBody = document.querySelector('#taxesTable tbody');
+            taxesTableBody.innerHTML = appData.settings.taxes.map((tax, index) => `
+                <tr>
+                    <td><input type="text" class="form-control" value="${tax.name}" id="taxName${index}"></td>
+                    <td><input type="number" class="form-control" value="${tax.rate}" step="0.1" min="0" max="100" id="taxRate${index}"></td>
+                    <td>
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="taxDefault${index}" ${tax.default ? 'checked' : ''}>
+                        </div>
+                    </td>
+                    <td>
+                        <button class="btn btn-sm btn-danger remove-tax-btn" data-id="${index}"><i class="fas fa-trash"></i></button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+        
+        function updateNewInvoiceForm() {
+            // Clients
+            const clientSelect = document.getElementById('invoiceClientSelect');
+            clientSelect.innerHTML = `
+                <option value="" selected disabled>Sélectionnez un client</option>
+                ${appData.clients.map(client => `
+                    <option value="${client.id}" ${appData.currentInvoice.clientId === client.id ? 'selected' : ''}>
+                        ${client.company || `${client.firstName} ${client.lastName}`}
+                    </option>
+                `).join('')}
+            `;
+            
+            // Articles
+            const itemsBody = document.getElementById('invoiceItemsBody');
+            itemsBody.innerHTML = appData.currentInvoice.items.map((item, index) => {
+                const product = appData.products.find(p => p.id === item.productId);
+                const tax = appData.settings.taxes[item.taxId];
+                
+                return `
+                    <tr class="invoice-item-row" data-index="${index}">
+                        <td>
+                            <select class="form-select product-select" required>
+                                <option value="" disabled>Sélectionnez un produit</option>
+                                ${appData.products.map(p => `
+                                    <option value="${p.id}" ${p.id === item.productId ? 'selected' : ''}>${p.name}</option>
+                                `).join('')}
+                            </select>
+                        </td>
+                        <td><input type="number" class="form-control price-input" value="${item.price}" step="0.01" min="0" required></td>
+                        <td>
+                            <select class="form-select tax-select">
+                                ${appData.settings.taxes.map((t, i) => `
+                                    <option value="${i}" ${i === item.taxId ? 'selected' : ''}>${t.name} ${t.rate}%</option>
+                                `).join('')}
+                            </select>
+                        </td>
+                        <td><input type="number" class="form-control quantity-input" value="${item.quantity}" min="1" required></td>
+                        <td>${formatCurrency(item.price * item.quantity, appData.currentInvoice.currency)}</td>
+                        <td class="text-center"><button class="btn btn-sm btn-danger remove-item-btn"><i class="fas fa-trash"></i></button></td>
+                    </tr>
+                `;
+            }).join('');
+            
+            // Produits disponibles
+            const availableProductsList = document.getElementById('availableProductsList');
+            availableProductsList.innerHTML = appData.products.map(product => {
+                const tax = appData.settings.taxes[product.taxId];
+                let stockBadge = 'bg-success';
+                if (product.stock <= 0) stockBadge = 'bg-danger';
+                else if (product.stock <= 5) stockBadge = 'bg-warning';
+                
+                return `
+                    <a href="#" class="list-group-item list-group-item-action product-item" data-id="${product.id}">
+                        <div class="d-flex justify-content-between">
+                            <strong>${product.name}</strong>
+                            <span>${formatCurrency(product.price)}</span>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <span class="text-muted small">${product.reference}</span>
+                            <span class="small"><span class="badge ${stockBadge}">${product.stock} en stock</span></span>
+                        </div>
+                        <div class="text-muted small">${tax ? tax.name + ' ' + tax.rate + '%' : 'Aucune taxe'}</div>
+                    </a>
+                `;
+            }).join('');
+            
+            // Calculer les totaux
+            calculateInvoiceTotals();
+        }
+        
+        function showInvoiceDetails(invoiceId) {
+            const invoice = appData.invoices.find(inv => inv.id === invoiceId);
+            if (!invoice) return;
+            
+            const client = appData.clients.find(c => c.id === invoice.clientId);
+            const modalBody = document.getElementById('invoiceModalBody');
+            
+            // Calculer les totaux
+            const subtotal = invoice.items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            const discount = subtotal * (invoice.discount / 100);
+            
+            const taxes = {};
+            invoice.items.forEach(item => {
+                const product = appData.products.find(p => p.id === item.productId);
+                if (product) {
+                    const tax = appData.settings.taxes[item.taxId];
+                    if (tax) {
+                        if (!taxes[tax.rate]) {
+                            taxes[tax.rate] = {
+                                name: tax.name,
+                                rate: tax.rate,
+                                amount: 0
+                            };
+                        }
+                        taxes[tax.rate].amount += item.price * item.quantity * (tax.rate / 100);
+                    }
+                }
+            });
+            
+            let totalTax = 0;
+            Object.values(taxes).forEach(tax => {
+                totalTax += tax.amount;
+            });
+            
+            const total = subtotal - discount + totalTax;
+            
+            // Générer le HTML
+            modalBody.innerHTML = `
+                <div class="invoice-preview">
+                    <div class="invoice-header">
+                        <div class="row">
+                            <div class="col-6">
+                                <h3 class="text-primary">${appData.settings.company.name}</h3>
+                                <div>${appData.settings.company.address}</div>
+                                <div>${appData.settings.company.zip} ${appData.settings.company.city}</div>
+                                <div>Tél: ${appData.settings.company.phone}</div>
+                            </div>
+                            <div class="col-6 text-end">
+                                <h3>FACTURE</h3>
+                                <div>N°: ${invoice.number}</div>
+                                <div>Date: ${formatDate(invoice.date)}</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-4">
+                        <div class="col-6">
+                            <h5>Facturé à:</h5>
+                            <div><strong>${client ? client.company || `${client.firstName} ${client.lastName}` : 'Non spécifié'}</strong></div>
+                            ${client ? `
+                                <div>${client.firstName} ${client.lastName}</div>
+                                <div>${client.address}</div>
+                                <div>${client.zip} ${client.city}</div>
+                            ` : ''}
+                        </div>
+                        <div class="col-6 text-end">
+                            <h5>Échéance:</h5>
+                            <div class="fs-5">${formatDate(invoice.dueDate)}</div>
+                            <div class="mt-3">
+                                <h5>Total dû:</h5>
+                                <div class="fs-4 fw-bold">${formatCurrency(total, invoice.currency)}</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <table class="table invoice-table">
+                        <thead>
+                            <tr>
+                                <th>Description</th>
+                                <th>Prix unitaire</th>
+                                <th>Qté</th>
+                                <th>Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${invoice.items.map(item => {
+                                const product = appData.products.find(p => p.id === item.productId);
+                                const tax = appData.settings.taxes[item.taxId];
+                                const itemTotal = item.price * item.quantity;
+                                
+                                return `
+                                    <tr>
+                                        <td>${product ? product.name : 'Produit inconnu'}</td>
+                                        <td>${formatCurrency(item.price, invoice.currency)}</td>
+                                        <td>${item.quantity}</td>
+                                        <td>${formatCurrency(itemTotal, invoice.currency)}</td>
+                                    </tr>
+                                `;
+                            }).join('')}
+                        </tbody>
+                    </table>
+
+                    <div class="row mt-4">
+                        <div class="col-7">
+                            ${invoice.notes ? `
+                                <div class="fw-bold">Notes:</div>
+                                <div>${invoice.notes}</div>
+                            ` : ''}
+                            ${invoice.terms ? `
+                                <div class="fw-bold mt-2">Conditions de paiement:</div>
+                                <div>${invoice.terms}</div>
+                            ` : ''}
+                        </div>
+                        <div class="col-5">
+                            <div class="d-flex justify-content-between">
+                                <span>Sous-total:</span>
+                                <span>${formatCurrency(subtotal, invoice.currency)}</span>
+                            </div>
+                            ${Object.values(taxes).map(tax => `
+                                <div class="d-flex justify-content-between">
+                                    <span>TVA (${tax.name} ${tax.rate}%):</span>
+                                    <span>${formatCurrency(tax.amount, invoice.currency)}</span>
+                                </div>
+                            `).join('')}
+                            ${invoice.discount > 0 ? `
+                                <div class="d-flex justify-content-between">
+                                    <span>Remise (${invoice.discount}%):</span>
+                                    <span>-${formatCurrency(discount, invoice.currency)}</span>
+                                </div>
+                            ` : ''}
+                            <div class="d-flex justify-content-between fw-bold mt-2 pt-2 border-top">
+                                <span>Total:</span>
+                                <span>${formatCurrency(total, invoice.currency)}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // Mettre à jour l'état de l'application
+            appState.editingInvoiceId = invoiceId;
+            
+            // Afficher la modal
+            UI.modals.invoice.show();
+        }
+        
+        // Fonctions de gestion des événements
+        function initEventListeners() {
+            // Navigation
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    // Mise à jour de la navigation active
+                    document.querySelectorAll('.nav-link').forEach(nav => nav.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // Affichage de la section correspondante
+                    const target = this.getAttribute('data-target');
+                    document.querySelectorAll('.content-section').forEach(section => {
+                        section.classList.remove('active');
+                    });
+                    document.getElementById(target).classList.add('active');
+                    
+                    // Fermer le menu sur mobile après sélection
+                    if(window.innerWidth < 992) {
+                        document.getElementById('sidebar').classList.remove('open');
+                    }
+                });
+            });
+            
+            // Menu mobile
+            document.getElementById('mobileMenuBtn').addEventListener('click', function() {
+                document.getElementById('sidebar').classList.toggle('open');
+            });
+            
+            // Tableau de bord
+            document.getElementById('refreshDashboard').addEventListener('click', updateDashboard);
+            document.querySelectorAll('.period-filter').forEach(filter => {
+                filter.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    document.querySelectorAll('.period-filter').forEach(f => f.classList.remove('active'));
+                    this.classList.add('active');
+                    document.getElementById('dashboardPeriodDropdown').innerHTML = `
+                        <i class="fas fa-calendar me-1"></i> ${this.textContent}
+                    `;
+                    // Ici, nous pourrions filtrer les données en fonction de la période sélectionnée
+                    updateDashboard();
+                });
+            });
+            
+            document.getElementById('viewAllInvoices').addEventListener('click', function(e) {
+                e.preventDefault();
+                document.querySelector('.nav-link[data-target="invoices"]').click();
+            });
+            
+            document.getElementById('viewAllClients').addEventListener('click', function(e) {
+                e.preventDefault();
+                document.querySelector('.nav-link[data-target="clients"]').click();
+            });
+            
+            // Clients
+            document.getElementById('addClientBtn').addEventListener('click', function() {
+                appState.editingClientId = null;
+                document.getElementById('clientModalTitle').textContent = 'Nouveau client';
+                document.getElementById('clientForm').reset();
+                document.getElementById('clientId').value = '';
+            });
+            
+            document.getElementById('saveClientBtn').addEventListener('click', function() {
+                const form = document.getElementById('clientForm');
+                if (!form.checkValidity()) {
+                    form.reportValidity();
+                    return;
+                }
+                
+                const clientData = {
+                    id: appState.editingClientId || Math.max(...appData.clients.map(c => c.id), 0) + 1,
+                    firstName: document.getElementById('clientFirstName').value,
+                    lastName: document.getElementById('clientLastName').value,
+                    company: document.getElementById('clientCompany').value,
+                    email: document.getElementById('clientEmail').value,
+                    phone: document.getElementById('clientPhone').value,
+                    address: document.getElementById('clientAddress').value,
+                    zip: document.getElementById('clientZip').value,
+                    city: document.getElementById('clientCity').value,
+                    country: document.getElementById('clientCountry').value,
+                    siret: document.getElementById('clientSiret').value,
+                    createdAt: appState.editingClientId ? 
+                        appData.clients.find(c => c.id === appState.editingClientId).createdAt : 
+                        new Date().toISOString().split('T')[0]
+                };
+                
+                if (appState.editingClientId) {
+                    const index = appData.clients.findIndex(c => c.id === appState.editingClientId);
+                    if (index !== -1) {
+                        appData.clients[index] = clientData;
+                    }
+                } else {
+                    appData.clients.push(clientData);
+                }
+                
+                saveData();
+                updateUI();
+                UI.modals.client.hide();
+                showToast('success', 'Client enregistré avec succès');
+            });
+            
+            document.addEventListener('click', function(e) {
+                if (e.target.classList.contains('edit-client-btn')) {
+                    const clientId = parseInt(e.target.getAttribute('data-id'));
+                    const client = appData.clients.find(c => c.id === clientId);
+                    if (!client) return;
+                    
+                    appState.editingClientId = clientId;
+                    document.getElementById('clientModalTitle').textContent = 'Modifier client';
+                    document.getElementById('clientId').value = client.id;
+                    document.getElementById('clientFirstName').value = client.firstName;
+                    document.getElementById('clientLastName').value = client.lastName;
+                    document.getElementById('clientCompany').value = client.company || '';
+                    document.getElementById('clientEmail').value = client.email || '';
+                    document.getElementById('clientPhone').value = client.phone || '';
+                    document.getElementById('clientAddress').value = client.address || '';
+                    document.getElementById('clientZip').value = client.zip || '';
+                    document.getElementById('clientCity').value = client.city || '';
+                    document.getElementById('clientCountry').value = client.country || 'France';
+                    document.getElementById('clientSiret').value = client.siret || '';
+                    
+                    UI.modals.client.show();
+                }
+                
+                if (e.target.classList.contains('delete-client-btn')) {
+                    const clientId = parseInt(e.target.getAttribute('data-id'));
+                    const client = appData.clients.find(c => c.id === clientId);
+                    if (!client) return;
+                    
+                    // Vérifier si le client a des factures
+                    const clientInvoices = appData.invoices.filter(inv => inv.clientId === clientId);
+                    if (clientInvoices.length > 0) {
+                        showToast('error', 'Ce client a des factures associées et ne peut pas être supprimé');
+                        return;
+                    }
+                    
+                    confirmAction(`Êtes-vous sûr de vouloir supprimer le client ${client.firstName} ${client.lastName} ?`, function() {
+                        appData.clients = appData.clients.filter(c => c.id !== clientId);
+                        saveData();
+                        updateUI();
+                        showToast('success', 'Client supprimé avec succès');
+                    });
+                }
+                
+                if (e.target.classList.contains('create-invoice-btn')) {
+                    const clientId = parseInt(e.target.getAttribute('data-id'));
+                    appData.currentInvoice.clientId = clientId;
+                    document.querySelector('.nav-link[data-target="new-invoice"]').click();
+                    updateNewInvoiceForm();
+                }
+            });
+            
+            // Produits
+            document.getElementById('addProductBtn').addEventListener('click', function() {
+                appState.editingProductId = null;
+                document.getElementById('productModalTitle').textContent = 'Nouveau produit';
+                document.getElementById('productForm').reset();
+                document.getElementById('productId').value = '';
+                
+                // Charger les taxes dans le select
+                const taxSelect = document.getElementById('productTax');
+                taxSelect.innerHTML = appData.settings.taxes.map((tax, index) => `
+                    <option value="${index}" ${tax.default ? 'selected' : ''}>${tax.name} (${tax.rate}%)</option>
+                `).join('');
+            });
+            
+            document.getElementById('saveProductBtn').addEventListener('click', function() {
+                const form = document.getElementById('productForm');
+                if (!form.checkValidity()) {
+                    form.reportValidity();
+                    return;
+                }
+                
+                const productData = {
+                    id: appState.editingProductId || Math.max(...appData.products.map(p => p.id), 0) + 1,
+                    name: document.getElementById('productName').value,
+                    reference: document.getElementById('productReference').value,
+                    category: document.getElementById('productCategory').value,
+                    price: parseFloat(document.getElementById('productPrice').value),
+                    taxId: parseInt(document.getElementById('productTax').value),
+                    stock: parseInt(document.getElementById('productStock').value) || 0,
+                    description: document.getElementById('productDescription').value,
+                    createdAt: appState.editingProductId ? 
+                        appData.products.find(p => p.id === appState.editingProductId).createdAt : 
+                        new Date().toISOString().split('T')[0]
+                };
+                
+                if (appState.editingProductId) {
+                    const index = appData.products.findIndex(p => p.id === appState.editingProductId);
+                    if (index !== -1) {
+                        appData.products[index] = productData;
+                    }
+                } else {
+                    appData.products.push(productData);
+                }
+                
+                saveData();
+                updateUI();
+                UI.modals.product.hide();
+                showToast('success', 'Produit enregistré avec succès');
+            });
+            
+            document.addEventListener('click', function(e) {
+                if (e.target.classList.contains('edit-product-btn')) {
+                    const productId = parseInt(e.target.getAttribute('data-id'));
+                    const product = appData.products.find(p => p.id === productId);
+                    if (!product) return;
+                    
+                    appState.editingProductId = productId;
+                    document.getElementById('productModalTitle').textContent = 'Modifier produit';
+                    document.getElementById('productId').value = product.id;
+                    document.getElementById('productName').value = product.name;
+                    document.getElementById('productReference').value = product.reference;
+                    document.getElementById('productCategory').value = product.category || '';
+                    document.getElementById('productPrice').value = product.price;
+                    document.getElementById('productStock').value = product.stock;
+                    document.getElementById('productDescription').value = product.description || '';
+                    
+                    // Charger les taxes dans le select
+                    const taxSelect = document.getElementById('productTax');
+                    taxSelect.innerHTML = appData.settings.taxes.map((tax, index) => `
+                        <option value="${index}" ${index === product.taxId ? 'selected' : ''}>${tax.name} (${tax.rate}%)</option>
+                    `).join('');
+                    
+                    UI.modals.product.show();
+                }
+                
+                if (e.target.classList.contains('delete-product-btn')) {
+                    const productId = parseInt(e.target.getAttribute('data-id'));
+                    const product = appData.products.find(p => p.id === productId);
+                    if (!product) return;
+                    
+                    // Vérifier si le produit est utilisé dans des factures
+                    const productInInvoices = appData.invoices.some(inv => 
+                        inv.items.some(item => item.productId === productId)
+                    );
+                    
+                    if (productInInvoices) {
+                        showToast('error', 'Ce produit est utilisé dans des factures et ne peut pas être supprimé');
+                        return;
+                    }
+                    
+                    confirmAction(`Êtes-vous sûr de vouloir supprimer le produit "${product.name}" ?`, function() {
+                        appData.products = appData.products.filter(p => p.id !== productId);
+                        saveData();
+                        updateUI();
+                        showToast('success', 'Produit supprimé avec succès');
+                    });
+                }
+            });
+            
+            // Factures
+            document.getElementById('goToNewInvoice').addEventListener('click', function() {
+                document.querySelector('.nav-link[data-target="new-invoice"]').click();
+            });
+            
+            document.addEventListener('click', function(e) {
+                if (e.target.classList.contains('view-invoice-btn') || 
+                   e.target.parentElement.classList.contains('view-invoice-btn')) {
+                    const btn = e.target.classList.contains('view-invoice-btn') ? 
+                        e.target : e.target.parentElement;
+                    const invoiceId = parseInt(btn.getAttribute('data-id'));
+                    showInvoiceDetails(invoiceId);
+                }
+                
+                if (e.target.classList.contains('download-invoice-btn') || 
+                   e.target.parentElement.classList.contains('download-invoice-btn')) {
+                    const btn = e.target.classList.contains('download-invoice-btn') ? 
+                        e.target : e.target.parentElement;
+                    const invoiceId = parseInt(btn.getAttribute('data-id'));
+                    const invoice = appData.invoices.find(inv => inv.id === invoiceId);
+                    
+                    if (invoice) {
+                        // Dans une application réelle, nous générerions le PDF ici
+                        showToast('success', 'Téléchargement du PDF démarré');
+                    }
+                }
+                
+                if (e.target.classList.contains('email-invoice-btn') || 
+                   e.target.parentElement.classList.contains('email-invoice-btn')) {
+                    const btn = e.target.classList.contains('email-invoice-btn') ? 
+                        e.target : e.target.parentElement;
+                    const invoiceId = parseInt(btn.getAttribute('data-id'));
+                    const invoice = appData.invoices.find(inv => inv.id === invoiceId);
+                    
+                    if (invoice) {
+                        const client = appData.clients.find(c => c.id === invoice.clientId);
+                        if (client && client.email) {
+                            showToast('success', `Facture envoyée à ${client.email}`);
+                        } else {
+                            showToast('error', 'Aucun email associé à ce client');
+                        }
+                    }
+                }
+            });
+            
+            // Nouvelle facture
+            document.getElementById('addInvoiceItemBtn').addEventListener('click', function() {
+                appData.currentInvoice.items.push({
+                    productId: null,
+                    quantity: 1,
+                    price: 0,
+                    taxId: appData.settings.taxes.findIndex(t => t.default)
+                });
+                updateNewInvoiceForm();
+            });
+            
+            document.getElementById('invoiceClientSelect').addEventListener('change', function() {
+                appData.currentInvoice.clientId = this.value ? parseInt(this.value) : null;
+                updateInvoicePreview();
+            });
+            
+            document.getElementById('invoiceDueDate').addEventListener('change', function() {
+                appData.currentInvoice.dueDate = this.value;
+                updateInvoicePreview();
+            });
+            
+            document.getElementById('invoiceCurrency').addEventListener('change', function() {
+                appData.currentInvoice.currency = this.value;
+                calculateInvoiceTotals();
+            });
+            
+            document.getElementById('invoiceNotes').addEventListener('input', function() {
+                appData.currentInvoice.notes = this.value;
+                updateInvoicePreview();
+            });
+            
+            document.getElementById('invoiceTerms').addEventListener('input', function() {
+                appData.currentInvoice.terms = this.value;
+                updateInvoicePreview();
+            });
+            
+            document.getElementById('invoiceDiscount').addEventListener('change', function() {
+                appData.currentInvoice.discount = parseFloat(this.value) || 0;
+                calculateInvoiceTotals();
+            });
+            
+            document.addEventListener('click', function(e) {
+                if (e.target.classList.contains('remove-item-btn') || 
+                   e.target.parentElement.classList.contains('remove-item-btn')) {
+                    const btn = e.target.classList.contains('remove-item-btn') ? 
+                        e.target : e.target.parentElement;
+                    const row = btn.closest('tr');
+                    const index = parseInt(row.getAttribute('data-index'));
+                    
+                    appData.currentInvoice.items.splice(index, 1);
+                    calculateInvoiceTotals();
+                    updateNewInvoiceForm();
+                }
+            });
+            
+            document.addEventListener('change', function(e) {
+                if (e.target.classList.contains('product-select')) {
+                    const row = e.target.closest('tr');
+                    const index = parseInt(row.getAttribute('data-index'));
+                    const productId = parseInt(e.target.value);
+                    const product = appData.products.find(p => p.id === productId);
+                    
+                    if (product) {
+                        appData.currentInvoice.items[index].productId = productId;
+                        appData.currentInvoice.items[index].price = product.price;
+                        appData.currentInvoice.items[index].taxId = product.taxId;
+                        
+                        // Mettre à jour les selects de taxe et de prix
+                        row.querySelector('.price-input').value = product.price;
+                        row.querySelector('.tax-select').value = product.taxId;
+                        
+                        calculateInvoiceTotals();
+                    }
+                }
+                
+                if (e.target.classList.contains('price-input')) {
+                    const row = e.target.closest('tr');
+                    const index = parseInt(row.getAttribute('data-index'));
+                    const price = parseFloat(e.target.value) || 0;
+                    
+                    appData.currentInvoice.items[index].price = price;
+                    calculateInvoiceTotals();
+                }
+                
+                if (e.target.classList.contains('tax-select')) {
+                    const row = e.target.closest('tr');
+                    const index = parseInt(row.getAttribute('data-index'));
+                    const taxId = parseInt(e.target.value);
+                    
+                    appData.currentInvoice.items[index].taxId = taxId;
+                    calculateInvoiceTotals();
+                }
+                
+                if (e.target.classList.contains('quantity-input')) {
+                    const row = e.target.closest('tr');
+                    const index = parseInt(row.getAttribute('data-index'));
+                    const quantity = parseInt(e.target.value) || 1;
+                    
+                    appData.currentInvoice.items[index].quantity = quantity;
+                    calculateInvoiceTotals();
+                }
+            });
+            
+            document.addEventListener('click', function(e) {
+                if (e.target.classList.contains('product-item') || 
+                   e.target.parentElement.classList.contains('product-item')) {
+                    e.preventDefault();
+                    const item = e.target.classList.contains('product-item') ? 
+                        e.target : e.target.parentElement;
+                    const productId = parseInt(item.getAttribute('data-id'));
+                    const product = appData.products.find(p => p.id === productId);
+                    
+                    if (product) {
+                        // Vérifier si le produit est déjà dans la facture
+                        const existingItemIndex = appData.currentInvoice.items.findIndex(i => i.productId === productId);
+                        
+                        if (existingItemIndex !== -1) {
+                            // Augmenter la quantité si le produit existe déjà
+                            appData.currentInvoice.items[existingItemIndex].quantity += 1;
+                        } else {
+                            // Ajouter un nouvel article
+                            appData.currentInvoice.items.push({
+                                productId: product.id,
+                                quantity: 1,
+                                price: product.price,
+                                taxId: product.taxId
+                            });
+                        }
+                        
+                        calculateInvoiceTotals();
+                        updateNewInvoiceForm();
+                        showToast('success', 'Produit ajouté à la facture');
+                    }
+                }
+            });
+            
+            document.getElementById('saveDraftBtn').addEventListener('click', function() {
+                if (!appData.currentInvoice.clientId) {
+                    showToast('error', 'Veuillez sélectionner un client');
+                    document.getElementById('invoiceClientSelect').focus();
+                    return;
+                }
+                
+                if (appData.currentInvoice.items.length === 0) {
+                    showToast('error', 'Veuillez ajouter au moins un article');
+                    return;
+                }
+                
+                // Enregistrer comme brouillon
+                showToast('success', 'Brouillon enregistré');
+            });
+            
+            document.getElementById('generatePdfBtn').addEventListener('click', function() {
+                if (!appData.currentInvoice.clientId) {
+                    showToast('error', 'Veuillez sélectionner un client');
+                    document.getElementById('invoiceClientSelect').focus();
+                    return;
+                }
+                
+                if (appData.currentInvoice.items.length === 0) {
+                    showToast('error', 'Veuillez ajouter au moins un article');
+                    return;
+                }
+                
+                // Générer le PDF
+                generatePdf();
+            });
+            
+            // Paramètres
+            document.getElementById('saveSettingsBtn').addEventListener('click', function() {
+                // Enregistrer les informations de l'entreprise
+                appData.settings.company = {
+                    name: document.getElementById('companyName').value,
+                    siret: document.getElementById('companySiret').value,
+                    address: document.getElementById('companyAddress').value,
+                    zip: document.getElementById('companyZip').value,
+                    city: document.getElementById('companyCity').value,
+                    phone: document.getElementById('companyPhone').value,
+                    email: document.getElementById('companyEmail').value,
+                    website: document.getElementById('companyWebsite').value,
+                    logo: appData.settings.company.logo // Conserver l'ancien logo pour l'instant
+                };
+                
+                // Enregistrer les paramètres de facturation
+                appData.settings.invoice = {
+                    prefix: document.getElementById('invoicePrefix').value,
+                    nextNumber: parseInt(document.getElementById('invoiceNextNumber').value),
+                    dueDays: parseInt(document.getElementById('invoiceDueDays').value),
+                    defaultCurrency: document.getElementById('invoiceDefaultCurrency').value,
+                    footerNotes: document.getElementById('invoiceFooterNotes').value,
+                    defaultTerms: document.getElementById('invoiceDefaultTerms').value
+                };
+                
+                // Enregistrer les taxes
+                const taxes = [];
+                document.querySelectorAll('#taxesTable tbody tr').forEach(row => {
+                    const name = row.querySelector('input[type="text"]').value;
+                    const rate = parseFloat(row.querySelector('input[type="number"]').value);
+                    const isDefault = row.querySelector('input[type="checkbox"]').checked;
+                    
+                    if (name && !isNaN(rate)) {
+                        taxes.push({ name, rate, default: isDefault });
+                    }
+                });
+                
+                // S'assurer qu'il y a au moins une taxe par défaut
+                if (taxes.length > 0 && !taxes.some(t => t.default)) {
+                    taxes[0].default = true;
+                }
+                
+                appData.settings.taxes = taxes;
+                
+                // Gérer le logo
+                const logoInput = document.getElementById('companyLogo');
+                if (logoInput.files.length > 0) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        appData.settings.company.logo = e.target.result;
+                        saveData();
+                        updateUI();
+                        showToast('success', 'Paramètres enregistrés avec succès');
+                    };
+                    reader.readAsDataURL(logoInput.files[0]);
+                } else {
+                    saveData();
+                    updateUI();
+                    showToast('success', 'Paramètres enregistrés avec succès');
+                }
+            });
+            
+            document.getElementById('companyLogo').addEventListener('change', function() {
+                const file = this.files[0];
+                if (!file) return;
+                
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const preview = document.getElementById('companyLogoPreview');
+                    preview.src = e.target.result;
+                    preview.classList.remove('d-none');
+                };
+                reader.readAsDataURL(file);
+            });
+            
+            document.getElementById('addTaxBtn').addEventListener('click', function() {
+                const tbody = document.querySelector('#taxesTable tbody');
+                const newRow = document.createElement('tr');
+                const newId = document.querySelectorAll('#taxesTable tbody tr').length;
+                
+                newRow.innerHTML = `
+                    <td><input type="text" class="form-control" id="taxName${newId}" placeholder="Nom de la taxe"></td>
+                    <td><input type="number" class="form-control" id="taxRate${newId}" value="0" step="0.1" min="0" max="100"></td>
+                    <td>
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="taxDefault${newId}">
+                        </div>
+                    </td>
+                    <td>
+                        <button class="btn btn-sm btn-danger remove-tax-btn"><i class="fas fa-trash"></i></button>
+                    </td>
+                `;
+                tbody.appendChild(newRow);
+            });
+            
+            document.addEventListener('click', function(e) {
+                if (e.target.classList.contains('remove-tax-btn') || 
+                   e.target.parentElement.classList.contains('remove-tax-btn')) {
+                    const btn = e.target.classList.contains('remove-tax-btn') ? 
+                        e.target : e.target.parentElement;
+                    const row = btn.closest('tr');
+                    
+                    // Ne pas supprimer la dernière taxe
+                    if (document.querySelectorAll('#taxesTable tbody tr').length <= 1) {
+                        showToast('error', 'Vous devez avoir au moins une taxe');
+                        return;
+                    }
+                    
+                    row.remove();
+                }
+            });
+            
+            // Sauvegarde et restauration
+            document.getElementById('exportClientsBtn').addEventListener('click', () => exportData('clients'));
+            document.getElementById('exportProductsBtn').addEventListener('click', () => exportData('products'));
+            document.getElementById('exportInvoicesBtn').addEventListener('click', () => exportData('invoices'));
+            document.getElementById('exportAllBtn').addEventListener('click', () => exportData('all'));
+            
+            document.getElementById('restoreBtn').addEventListener('click', function() {
+                const fileInput = document.getElementById('restoreFile');
+                if (fileInput.files.length === 0) {
+                    showToast('error', 'Veuillez sélectionner un fichier');
+                    return;
+                }
+                
+                const file = fileInput.files[0];
+                if (!file.name.endsWith('.json')) {
+                    showToast('error', 'Le fichier doit être au format JSON');
+                    return;
+                }
+                
+                confirmAction('Êtes-vous sûr de vouloir restaurer ces données ? Cela écrasera toutes vos données actuelles.', function() {
+                    importData(file, 'all');
+                    document.getElementById('restoreError').classList.add('d-none');
+                });
+            });
+            
+            // Confirmation modal
+            document.getElementById('confirmActionBtn').addEventListener('click', function() {
+                if (appState.confirmCallback) {
+                    appState.confirmCallback();
+                }
+                UI.modals.confirm.hide();
+            });
+            
+            // Invoice modal
+            document.getElementById('printInvoiceBtn').addEventListener('click', function() {
+                window.print();
+            });
+            
+            document.getElementById('downloadInvoiceBtn').addEventListener('click', function() {
+                const invoiceId = appState.editingInvoiceId;
+                const invoice = appData.invoices.find(inv => inv.id === invoiceId);
+                
+                if (invoice) {
+                    // Dans une application réelle, nous générerions le PDF ici
+                    showToast('success', 'Téléchargement du PDF démarré');
+                }
+            });
+        }
+    </script>
+</body>
+</html>
